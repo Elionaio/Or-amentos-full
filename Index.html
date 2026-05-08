@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Orçamentos Rápidos</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    button { margin: 5px; padding: 10px; }
+    input, select { display:block; margin:10px 0; padding:8px; width: 100%; }
+    .card { border:1px solid #ccc; padding:10px; margin-top:10px; }
+  </style>
+</head>
+<body>
+
+<h2>Escolha o perfil</h2>
+
+<button onclick="setPerfil('pedreiro')">👷 Pedreiro</button>
+<button onclick="setPerfil('mecanico')">🔧 Mecânico</button>
+
+<div id="app" style="display:none">
+
+  <h3 id="tituloPerfil"></h3>
+
+  <h4>Novo Serviço</h4>
+  <input id="nomeServico" placeholder="Nome do serviço">
+  <input id="precoServico" placeholder="Preço">
+  <button onclick="addServico()">Salvar serviço</button>
+
+  <h4>Serviços</h4>
+  <div id="lista"></div>
+
+  <h4>Criar orçamento</h4>
+
+  <select id="servicosSelect"></select>
+  <input id="cliente" placeholder="Nome do cliente">
+  <button onclick="gerarOrcamento()">Gerar e enviar</button>
+
+</div>
+
+<script>
+let perfil = "";
+let servicos = [];
+
+const base = {
+  pedreiro: [
+    { nome: "Reboco", preco: 80 },
+    { nome: "Piso", preco: 120 }
+  ],
+  mecanico: [
+    { nome: "Troca de óleo", preco: 60 },
+    { nome: "Freio", preco: 150 }
+  ]
+};
+
+function setPerfil(p) {
+  perfil = p;
+  servicos = base[p];
+
+  document.getElementById("app").style.display = "block";
+  document.getElementById("tituloPerfil").innerText = "Perfil: " + p;
+
+  render();
+}
+
+function render() {
+  const lista = document.getElementById("lista");
+  const select = document.getElementById("servicosSelect");
+
+  lista.innerHTML = "";
+  select.innerHTML = "";
+
+  servicos.forEach((s, i) => {
+    lista.innerHTML += `<div class='card'>${s.nome} - R$${s.preco}</div>`;
+    select.innerHTML += `<option value="${i}">${s.nome} - R$${s.preco}</option>`;
+  });
+}
+
+function addServico() {
+  const nome = document.getElementById("nomeServico").value;
+  const preco = document.getElementById("precoServico").value;
+
+  servicos.push({ nome, preco });
+  render();
+}
+
+function gerarOrcamento() {
+  const index = document.getElementById("servicosSelect").value;
+  const cliente = document.getElementById("cliente").value;
+
+  const s = servicos[index];
+
+  const msg = `Orçamento:\nCliente: ${cliente}\nServiço: ${s.nome}\nValor: R$${s.preco}`;
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+}
+</script>
+
+</body>
+</html>
